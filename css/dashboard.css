@@ -1,0 +1,83 @@
+.ikon {
+    font-size: 50pt;
+    color: #e9eaeb;
+}
+
+.ket {
+    color: #e9eaeb;
+}
+
+.head {
+    font-size: 14pt;
+}
+
+.total {
+    font-size: 17pt;
+}
+
+.tulisan {
+    margin-left: -20px;
+}
+
+.keluar {
+    width: 1000px;
+    height: 500px;
+    margin: 0px auto;
+}
+
+.chart {
+    margin: 20px 0;
+}
+
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 5px;
+    background-color: #65c763;
+    overflow: hidden;
+    width: 92%;
+    height: 0;
+    transition: .4s ease;
+}
+
+.jarak:hover .overlay {
+    height: 100%;
+}
+
+.tambah {
+    font-size: 60pt;
+    color: #e9eaeb;
+}
+
+.tulisan {
+    font-size: 21pt;
+    color: #e9eaeb;
+    margin-bottom: -1px;
+}
+
+.ikon2 {
+    font-size: 60pt;
+    color: #e9eaeb;
+}
+
+@media screen and (max-width: 768px) {
+    .jarak {
+        margin: 5px;
+    }
+
+    .ikon {
+        font-size: 40pt;
+    }
+
+    .head {
+        font-size: 12pt;
+    }
+
+    .total {
+        font-size: 14pt;
+    }
+}
