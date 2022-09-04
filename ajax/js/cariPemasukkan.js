@@ -1,6 +1,10 @@
 $(document).ready(function () {
     // event ketika keyword diketik
     $('#keyword').on('keyup', function () {
-        $('#row').load('ajax/pemasukkan.php?keyword=' + $('#keyword').val());
+        console.log('ok cari');
+        var keyword = $('#keyword').val();
+        var username = $('#username').val();
+        var filter = $('#filter').val();
+        $('.tampil').load('ajax/cariMasuk?keyword=' + keyword + '&username=' + username + '&filter=' + filter);
     });
 });

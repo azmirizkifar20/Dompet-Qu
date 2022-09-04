@@ -3,7 +3,8 @@
     
     if (isset($_GET['filter'])) {
         $tgl = $_GET['filter'];
-        $query = "SELECT * FROM keluar WHERE tanggal LIKE '%$tgl%'";
+        $username = $_GET['username'];
+        $query = "SELECT * FROM pengeluaran WHERE tanggal LIKE '%$tgl%' AND username = '$username'";
     } 
 
     $pengeluaran = query($query);
@@ -28,12 +29,12 @@
                 <td data-target="tanggal"><?= $row["tanggal"]; ?></td>
                 <td data-target="keterangan"><?= $row["keterangan"]; ?></td>
                 <td data-target="keperluan"><?= $row["keperluan"]; ?></td>
-                <td data-target="harga"><?php
-                        $harga = $row["harga"];
+                <td data-target="jumlahKeluar"><?php
+                        $jumlah = $row["jumlah"];
                         // konversi string nilai ke int + split
-                        $konversiHarga = str_replace('.', '', $harga);
-                        $hasilHarga = number_format($konversiHarga, 0, ',', '.');
-                        echo "$hasilHarga"
+                        $konversiJumlah = str_replace('.', '', $jumlah);
+                        $hasilJumlah = number_format($konversiJumlah, 0, ',', '.');
+                        echo "$hasilJumlah"
                     ?></td>
                 <td>    
                     <a href="#" id="<?= $row["id"] ;?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
@@ -41,10 +42,10 @@
                 </td>
             </tr>
             <?php
-                $hargae[] = $row["harga"];
-                $hargaConvert = str_replace('.', '', $hargae);
-                $totali = array_sum($hargaConvert);
-                $hasilHarga = number_format($totali, 0, ',', '.');
+                $jumlah2[] = $row["jumlah"];
+                $jumlahConvert = str_replace('.', '', $jumlah2);
+                $totali = array_sum($jumlahConvert);
+                $hasilJumlah = number_format($totali, 0, ',', '.');
             ?>
             <?php $i++ ?>
             <?php endforeach; ?>
@@ -52,7 +53,7 @@
             <?php if ( isset($tgl) == $pengeluaran ) : ?> 
             <tr>
                 <td colspan="4">Total Pengeluaran</td>
-                <td><?= $hasilHarga ?></td>
+                <td><?= $hasilJumlah ?></td>
             </tr>
             <?php elseif ( isset($tgl) != $pengeluaran ) : ?> 
             <tr>
@@ -62,30 +63,4 @@
     </div>
 </div>
 
-<script>
-$(function () {
-    $(".delete").click(function () {
-        var element = $(this);
-        var del_id = element.attr("id");
-        var info = 'id=' + del_id;
-        swal({
-            title: 'Peringatan!',
-            type: 'error',
-            text: 'Yakin ingin menghapus data?',
-            html: true,
-            confirmButtonColor: '#d9534f',
-            showCancelButton: true,
-        }, function () {
-            $.ajax({
-                type: "POST",
-                url: "ajax/deletePengeluaran.php",
-                data: info,
-                success: function () {
-                    $(".row").load("ajax/tampilPengeluaranDel.php");
-                }
-            });
-        });
-        return false;
-    });
-});
-</script>
+<script src="ajax/js/deletePengeluaran.js"></script>

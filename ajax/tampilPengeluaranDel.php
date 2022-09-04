@@ -1,7 +1,13 @@
 <?php 
     require '../function/functions.php';
+
+    if (isset($_GET['filterSend'])) {
+        $tgl = $_GET['filterSend'];
+        $username = $_GET['username'];
+    }
+    global $tgl;
     
-    $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = DATE(NOW())");
+    $pengeluaran = query("SELECT * FROM pengeluaran WHERE tanggal LIKE '%$tgl%' AND username = '$username'");
 ?>
 
 
@@ -24,12 +30,12 @@
                 <td data-target="tanggal"><?= $row["tanggal"]; ?></td>
                 <td data-target="keterangan"><?= $row["keterangan"]; ?></td>
                 <td data-target="keperluan"><?= $row["keperluan"]; ?></td>
-                <td data-target="harga"><?php
-                        $harga = $row["harga"];
+                <td data-target="jumlahKeluar"><?php
+                        $jumlah = $row["jumlah"];
                         // konversi string nilai ke int + split
-                        $konversiHarga = str_replace('.', '', $harga);
-                        $hasilHarga = number_format($konversiHarga, 0, ',', '.');
-                        echo "$hasilHarga"
+                        $konversiJumlah = str_replace('.', '', $jumlah);
+                        $hasilJumlah = number_format($konversiJumlah, 0, ',', '.');
+                        echo "$hasilJumlah"
                     ?></td>
                 <td>    
                     <a href="#" id="<?= $row["id"] ;?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
@@ -37,9 +43,9 @@
                 </td>
             </tr>
             <?php
-                $hargae[] = $row["harga"];
-                $hargaConvert = str_replace('.', '', $hargae);
-                $totali = array_sum($hargaConvert);
+                $jumlah2[] = $row["jumlah"];
+                $jumlahConvert = str_replace('.', '', $jumlah2);
+                $totali = array_sum($jumlahConvert);
                 $hasilcon = number_format($totali, 0, ',', '.');
             ?>
             <?php $i++ ?>
@@ -47,7 +53,7 @@
             
             <?php if ( isset($row) != "" ) : ?> 
             <tr>
-                <td colspan="4">Total Pemasukkan</td>
+                <td colspan="4">Total Pengeluaran</td>
                 <td><?= $hasilcon ?></td>
             </tr>
             <?php elseif ( isset($row) == "" ) : ?> 

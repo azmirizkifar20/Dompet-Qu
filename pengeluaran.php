@@ -1,22 +1,43 @@
 <?php 
-session_start();
-if (!isset($_SESSION["login"])) {
-    header("Location: login.php");
-    exit;
-}
+    session_start();
+    require "function/functions.php";
+    
+    // session dan cookie multilevel user
+    if(isset($_COOKIE['login'])) {
+        if ($_COOKIE['level'] == 'user') {
+            $_SESSION['login'] = true;
+            $ambilNama = $_COOKIE['login'];
+        } 
+        
+        elseif ($_COOKIE['level'] == 'admin') {
+            $_SESSION['login'] = true;
+            header('Location: administrator');
+        }
+    } 
 
-// koneksi ke databse
-include 'ajax/updatePengeluaran.php';
-require 'function/functions.php';
+    elseif ($_SESSION['level'] == 'user') {
+        $ambilNama = $_SESSION['user'];
+    } 
+    
+    else {
+        if ($_SESSION['level'] == 'admin') {
+            header('Location: administrator');
+            exit;
+        }
+    }
 
-$month = date('m');
-$day = date('d');
-$year = date('Y');
+    if(empty($_SESSION['login'])) {
+        header('Location: login');
+        exit;
+    } 
+    
+    $month = date('m');
+    $day = date('d');
+    $year = date('Y');
+    
+    $today = $year . '-' . $month . '-' . $day;
 
-$today = $year . '-' . $month . '-' . $day;
-
-$pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
-
+    $pengeluaran = query("SELECT * FROM pengeluaran WHERE tanggal = '$today' AND username = '$ambilNama'");
 ?>
 
 <!DOCTYPE html>
@@ -40,33 +61,31 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
 
 <body>
     <div class="header">
-        <h3 class="text-secondary font-weight-bold float-left logo">CRUD</h3>
-        <h3 class="text-secondary float-left logo2">Financial</h3>
-        <a href="logout.php" class="float-right log"><i class="fas fa-sign-out-alt"></i></a>
+        <img src="img/favicon.png" width="25px" height="25px" class="float-left logo-fav">
+        <h3 class="text-secondary font-weight-bold float-left logo">Dompet</h3>
+        <h3 class="text-secondary float-left logo2">- Qu</h3>
+        <a href="logout">
+            <div class="logout">
+                <i class="fas fa-sign-out-alt float-right log"></i>
+                <p class="float-right logout">Logout</p>
+            </div>
+        </a>
     </div>
 
     <div class="sidebar">
         <nav>
             <ul>
                 <li>
-                    <img src="img/profile.png" class="img-fluid profile" width="60px">
-                    <h5 class="admin float-right">Admin</h5>
-                    <div class="online">
+                    <img src="img/profile.png" class="img-fluid profile float-left" width="60px">
+                    <h5 class="admin"><?= substr($ambilNama, 0, 7) ?></h5>
+                    <div class="online online2">
                         <p class="float-right ontext">Online</p>
                         <div class="on float-right"></div>
                     </div>
                 </li>
-                <li>
-                    <div class="input-group">
-                        <input type="text" name="cari" class="form-control border-right-0 cari" id="keyword" placeholder="Search">
-                        <div class="input-group-append">
-                            <span class="input-group-text bg-white border-left-0 icone"><i class="fa fa-search"></i></span>
-                        </div>
-                    </div>
-                </li>
                 <!-- fungsi slide -->
-                <script> 
-                $(document).ready(function(){
+                <script>
+                    $(document).ready(function(){
                     $("#flip").click(function(){
                         $("#panel").slideToggle("medium");
                         $("#panel2").slideToggle("medium");
@@ -79,7 +98,7 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                 </script>
 
                 <!-- dashboard -->
-                <a href="index.php" style="text-decoration: none;">
+                <a href="dashboard" style="text-decoration: none;">
                     <li>
                         <div>
                             <span class="fas fa-tachometer-alt"></span>
@@ -87,7 +106,7 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                         </div>
                     </li>
                 </a>
-                
+
                 <!-- data -->
                 <li class="klik" id="flip" style="cursor:pointer;">
                     <div>
@@ -97,7 +116,7 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                     </div>
                 </li>
 
-                <a href="pemasukkan.php" class="linkAktif">
+                <a href="pemasukkan" class="linkAktif">
                     <li id="panel">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-file-invoice-dollar"></i></span>
@@ -106,7 +125,7 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                     </li>
                 </a>
 
-                <a href="pengeluaran.php" class="linkAktif">
+                <a href="pengeluaran" class="linkAktif">
                     <li id="panel2" class="aktif" style="border-left: 5px solid #306bff;">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-hand-holding-usd"></i></span>
@@ -125,7 +144,7 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                     </div>
                 </li>
 
-                <a href="tambahPemasukkan.php" class="linkAktif">
+                <a href="tambahPemasukkan" class="linkAktif">
                     <li id="panel3" style="display: none;">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-file-invoice-dollar"></i></span>
@@ -134,7 +153,7 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                     </li>
                 </a>
 
-                <a href="tambahPengeluaran.php" class="linkAktif">
+                <a href="tambahPengeluaran" class="linkAktif">
                     <li id="panel4" style="display: none;">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-hand-holding-usd"></i></span>
@@ -143,7 +162,17 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                     </li>
                 </a>
                 <!-- Input -->
-                
+
+                <!-- laporan -->
+                <a href="laporan" style="text-decoration: none;">
+                    <li>
+                        <div>
+                            <span><i class="fas fa-clipboard-list"></i></span>
+                            <span>Laporan</span>
+                        </div>
+                    </li>
+                </a>
+
                 <!-- change icon -->
                 <script>
                     $(".klik").click(function () {
@@ -167,16 +196,38 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
     <div class="main-content khusus">
         <div class="konten khusus2">
             <div class="konten_dalem khusus3">
-                <h2 class="head" style="color: #4b4f58;">Pilih Tanggal</h2>
+                <h2 class="head" style="color: #4b4f58;">Pengeluaran</h2>
                 <hr style="margin-top: -2px;">
-                <div class="form-group">
-                    <input type="date" value="<?= $today; ?>" class="form-control" class="filter" id="filter">
+
+                <div class="row cari-filter">
+                    <div class="col-lg-5">
+                        <table class="tabel-data">
+                            <tr>
+                                <td><label>Pilih tanggal</label></td>
+                                <td style="width: 71%"><input type="date" value="<?= $today ?>" class="form-control filter" id="filter"></td>
+                            </tr>
+                        </table>
+                        
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="hidden" id="username" value="<?= $ambilNama ?>">
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div class="input-group">
+                            <input type="text" name="cari" class="form-control border-right-0 cari" id="keyword" placeholder="Search" autocomplete="off">
+                            <div class="input-group-append">
+                                <span class="input-group-text bg-white border-left-0 icone"><i class="fa fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="headline">
                     <h5>Data Pengeluaran</h5>
                 </div>
                 <div class="container" id="container">
-                    <div class="row" id="row">
+                    <div class="row tampil" id="row">
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover table-striped table-bordered">
@@ -188,113 +239,103 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                                         <th>Jumlah Pengeluaran</th>
                                         <th>Aksi</th>
                                     </tr>
-    
+
                                     <?php $i = 1; ?>
-                                    <?php foreach ($pengeluaran as $row) : ?>
-                                    <tr class="show" id="<?= $row["id"]; ?>">
-                                        <td><?= $i; ?> </td>
-                                        <td data-target="tanggal"><?= $row["tanggal"]; ?></td>
-                                        <td data-target="keterangan"><?= $row["keterangan"]; ?></td>
-                                        <td data-target="keperluan"><?= $row["keperluan"]; ?></td>
-                                        <td data-target="harga"><?php
-                                                $harga = $row["harga"];
-                                                // konversi string nilai ke int + split
-                                                $konversiHarga = str_replace('.', '', $harga);
-                                                $hasilHarga = number_format($konversiHarga, 0, ',', '.');
-                                                echo "$hasilHarga"
-                                            ?></td>
-                                        <td>    
-                                            <a href="#" id="<?= $row["id"] ;?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
-                                            <a href="#" data-role="update" data-id="<?= $row["id"] ;?>" class="btn btn-outline-secondary" id="openBtn"><i class="fas fa-edit"></i></a>
+                                    <?php foreach($pengeluaran as $row) : ?>
+                                    <tr class="show" id="<?= $row['id'] ?>">
+                                        <td> <?= $i ?> </td>
+                                        <td data-target="tanggal"><?= htmlspecialchars($row['tanggal']) ?></td>
+                                        <td data-target="keterangan"><?= htmlspecialchars($row['keterangan']) ?> </td>
+                                        <td data-target="keperluan"><?= htmlspecialchars($row['keperluan']) ?></td>
+                                        <td data-target="jumlahKeluar"><?= htmlspecialchars($row['jumlah']) ?></td>
+                                        <td>
+                                            <a href="#" class="btn btn-info delete" id="<?= $row['id'] ?>">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                            <a href="#" data-role="update" class="btn btn-outline-secondary" id="openBtn" data-id="<?= $row['id'] ?>">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                     <?php
-                                        $hargae[] = $row["harga"];
-                                        $hargaConvert = str_replace('.', '', $hargae);
-                                        $totali = array_sum($hargaConvert);
-                                        $hasilHarga = number_format($totali, 0, ',', '.');
+                                        $jumlah2[] = $row["jumlah"];
+                                        $jumlahConvert = str_replace('.', '', $jumlah2);
+                                        $totali = array_sum($jumlahConvert);
+                                        $hasilJumlah = number_format($totali, 0, ',', '.');
                                     ?>
-                                    <?php $i++ ?>
+                                    <?php $i++; ?>
                                     <?php endforeach; ?>
-                                    
-                                    <?php if(isset($hargae) != null) :?>
+
+                                    <?php if(isset($jumlah2) != null) :?>
                                     <tr>
                                         <td colspan="4">Total Pengeluaran</td>
-                                        <td id="total" data-target="total"><?= $hasilHarga ?></td>
+                                        <td id="total" data-target="total">
+                                        <?= $hasilJumlah ?>
+                                        </td>
                                     </tr>
                                     <?php endif; ?>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- export -->
-                    <form action="export/excelPengeluaran.php" method="post">
-                    <button type="submit" name="excel" class="btn btn-success export float-right"><i class="far fa-file-excel"></i>
-                        save to excel</button>
-                    </form>
-                    <form action="export/pdfPengeluaran.php" method="post">
-                        <button type="submit" name="pdf" class="btn btn-danger export pdf float-right"><i class="far fa-file-pdf"></i> save
-                            to PDF</button>
-                    </form>
-                    <!-- export -->
+
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary btn2" data-toggle="modal" data-target="#exampleModalCenter">
-                    <i class=" fas fa-hand-holding-usd"></i> Tambah Data
+                        <i class=" fas fa-hand-holding-usd"></i> Tambah Data
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Modal Tambah Data -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalCenterTitle">Tambah Data Pengeluaran</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
 
-        <!-- isi form -->
-        <form class="form-user2" method="post">
-        <div class="modal-body">
-            <script type="text/javascript" src="js/pisahTitik.js"></script>
-                <div class="form-group">
-                    <label>Masukkan Tanggal</label>
-                    <input type="date" value="<?= $today ?>" name="tanggal" class="form-control" required>
+    <!-- Modal Tambah Data -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Tambah Data Pengeluaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label>Masukkan Keterangan Pengeluaran</label>
-                    <input type="text" name="keterangan" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Masukkan Keperluan Pengeluaran</label>
-                        <select name="keperluan" class="form-control" id="exampleFormControlSelect1">
-                            <option>Makan dan Minum</option>
-                            <option>Hutang</option>
-                            <option>Peralatan</option>
-                            <option>Organisasi</option>
-                            <option>Kendaraan</option>
-                            <option>Keperluan pribadi</option>
-                            <option>Lain - lain</option>
-                        </select>
-                </div>
-                <div class="form-group">
-                    <label>Masukkan Jumlah Pengeluaran</label>
-                    <input type="text" id="jumlah" name="harga" class="form-control" onkeydown="return numbersonly(this, event);" onkeyup="javascript:tandaPemisahTitik(this);" required>
-                </div>
+
+                <!-- isi form -->
+                    <div class="modal-body">
+                        <script type="text/javascript" src="js/pisahTitik.js"></script>
+                        <div class="form-group">
+                            <label>Masukkan Tanggal</label>
+                            <input type="date" value="<?= $today ?>" id="tanggalTambah" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Masukkan Keterangan Pengeluaran</label>
+                            <input type="text" id="keteranganTambah" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Masukkan Keperluan Pengeluaran</label>
+                            <select id="keperluanTambah" class="form-control">
+                                <option>Makan dan Minum</option>
+                                <option>Hutang</option>
+                                <option>Peralatan</option>
+                                <option>Organisasi</option>
+                                <option>Kendaraan</option>
+                                <option>Keperluan pribadi</option>
+                                <option>Lain - lain</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Masukkan Jumlah Pengeluaran</label>
+                            <input type="text" id="jumlahTambah" class="form-control" onkeydown="return numbersonly(this, event);"
+                                onkeyup="javascript:tandaPemisahTitik(this);" required>
+                        </div>
+                    </div>
+                    <!-- footer form -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary tambahKeluar">Tambah</button>
+                    </div>
+            </div>
         </div>
-        <!-- footer form -->
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" class="btn btn-primary tambahin2">Tambah</button>
-        </div>
-        </form>
-        </div>
-    </div>
     </div>
     <!-- Modal Tambah Data -->
 
@@ -305,23 +346,23 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Ubah Data Pengeluaran</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <!-- isi form -->
                 <div class="modal-body">
                     <input type="hidden" id="userId" class="form-control">
-                        <div class="form-group">
-                            <label for="tanggal">Tanggal</label>
-                            <input type="date" class="form-control" id="tanggal" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan Pengeluaran</label>
-                            <input type="text" class="form-control" id="keterangan" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="keperluan">Keperluan Pengeluaran</label>
-                            <select class="form-control" id="keperluan">
+                    <div class="form-group">
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" class="form-control" id="tanggal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="keterangan">Keterangan Pengeluaran</label>
+                        <input type="text" class="form-control" id="keterangan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="keperluan">Keperluan Pengeluaran</label>
+                        <select class="form-control" id="keperluan">
                             <option>Makan dan Minum</option>
                             <option>Hutang</option>
                             <option>Peralatan</option>
@@ -329,12 +370,13 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
                             <option>Kendaraan</option>
                             <option>Keperluan pribadi</option>
                             <option>Lain - lain</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="harga">Jumlah Pengeluaran</label>
-                            <input type="text" class="form-control" id="harga" onkeydown="return numbersonly(this, event);" onkeyup="javascript:tandaPemisahTitik(this);" required>
-                        </div>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlahKeluar">Jumlah Pengeluaran</label>
+                        <input type="text" class="form-control" id="jumlahKeluar" onkeydown="return numbersonly(this, event);"
+                            onkeyup="javascript:tandaPemisahTitik(this);" required>
+                    </div>
                 </div>
                 <!-- footer form -->
                 <div class="modal-footer">
@@ -348,11 +390,11 @@ $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = '$today'");
 
     <!-- double modal -->
     <script>
-    $('#openBtn').click(function () {
-        $('#myModal2').modal({
-            show: true
-        });
-    })
+        $('#openBtn').click(function () {
+            $('#myModal2').modal({
+                show: true
+            });
+        })
     </script>
 
     <script src="js/bootstrap.js"></script>

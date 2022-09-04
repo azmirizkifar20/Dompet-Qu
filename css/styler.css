@@ -44,6 +44,11 @@ h3.logo {
     font-family: nyala;
 }
 
+.logo-fav {
+    margin-left: 13px;
+    margin-top: 10px;
+}
+
 .sidebar {
     position: fixed;
     width: 100%;
@@ -99,9 +104,16 @@ span {
 }
 
 .log {
-    font-size: 15pt;
-    line-height: 44px;
+    font-size: 16pt;
+    line-height: 45px;
     margin-right: 10px;
+}
+
+.logout {
+    font-family: nyala;
+    font-size: 17pt;
+    line-height: 44px;
+    margin-right: 5px;
 }
 
 div.konten {
@@ -176,11 +188,17 @@ td {
     font-family: nyala;
     margin-right: 40px;
     color: #4b4f58;
+    margin-bottom: 28px;
+    margin-left: 84px;
 }
 
 .online {
     font-size: 12pt;
     margin-right: 42px;
+}
+
+.online2 {
+    margin-right: 53px;
 }
 
 .on {
@@ -222,6 +240,34 @@ td {
     display: flex;
 }
 
+.laporan tr,
+.laporan td {
+    padding: 5px;
+    font-size: 14pt;
+}
+
+.laporan {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    height: 40px;
+}
+
+.tabel-data tr,
+.tabel-data td {
+    padding: 0 5px;
+}
+
+.tabel-data label {
+    font-size: 15pt;
+}
+
+.cari-filter {
+    padding-bottom: 15px;
+    padding-top: 2px;
+}
+
 @media screen and (min-width: 600px) {
     .sidebar {
         width: 80px;
@@ -242,11 +288,12 @@ td {
     .main-content {
         margin-left: 80px;
     }
+
 }
 
 @media screen and (min-width: 1000px) {
     .sidebar {
-        width: 200px;
+        width: 220px;
     }
 
     .sidebar ul li {
@@ -275,6 +322,10 @@ td {
 
     .icone {
         display: none;
+    }
+
+    .admin {
+        margin-bottom: 40px;
     }
 }
 
@@ -358,5 +409,4 @@ td {
     table {
         overflow-x: auto;
     }
-
 }

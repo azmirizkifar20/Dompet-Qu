@@ -1,9 +1,10 @@
 <?php 
     require '../function/functions.php';
 
-    if (isset($_GET['filter'])) {
-        $tgl = $_GET['filter'];
-        $query = "SELECT * FROM masuk WHERE tanggal LIKE '%$tgl%'";
+    if (isset($_GET['filterSend'])) {
+        $tgl = $_GET['filterSend'];
+        $username = $_GET['username'];
+        $query = "SELECT * FROM pemasukkan WHERE tanggal LIKE '%$tgl%' AND username = '$username'";
     } 
 
     $pemasukkan = query($query);
@@ -28,22 +29,16 @@
                 <td data-target="tanggal"><?= $row["tanggal"]; ?></td>
                 <td data-target="keterangan"><?= $row["keterangan"]; ?></td>
                 <td data-target="sumber"><?= $row["sumber"]; ?></td>
-                <td data-target="harga"><?php
-                        $harga = $row["harga"];
-                        // konversi string nilai ke int + split
-                        $konversiHarga = str_replace('.', '', $harga);
-                        $hasilHarga = number_format($konversiHarga, 0, ',', '.');
-                        echo "$hasilHarga"
-                    ?></td>
+                <td data-target="jumlahMasuk"><?= $row['jumlah'] ?></td>
                 <td>    
-                    <a href="#" id="<?= $row["id"] ;?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
-                    <a href="#" data-role="update" data-id="<?= $row["id"] ;?>" class="btn btn-outline-secondary" id="openBtn"><i class="fas fa-edit"></i></a>
+                    <a href="#" id="<?= $row["id"] ?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
+                    <a href="#" data-role="update" data-id="<?= $row["id"] ?>" class="btn btn-outline-secondary" id="openBtn"><i class="fas fa-edit"></i></a>
                 </td>
             </tr>
             <?php
-                $hargae[] = $row["harga"];
-                $hargaConvert = str_replace('.', '', $hargae);
-                $totali = array_sum($hargaConvert);
+                $jumlah2[] = $row["jumlah"];
+                $jumlahConvert = str_replace('.', '', $jumlah2);
+                $totali = array_sum($jumlahConvert);
                 $hasilcon = number_format($totali, 0, ',', '.');
             ?>
             <?php $i++ ?>
@@ -63,30 +58,4 @@
     </div>
 </div>
 
-<script>
-$(function () {
-    $(".delete").click(function () {
-        var element = $(this);
-        var del_id = element.attr("id");
-        var info = 'id=' + del_id;
-        swal({
-            title: 'Peringatan!',
-            type: 'error',
-            text: 'Yakin ingin menghapus data?',
-            html: true,
-            confirmButtonColor: '#d9534f',
-            showCancelButton: true,
-        }, function () {
-            $.ajax({
-                type: "POST",
-                url: "ajax/deletePemasukkan.php",
-                data: info,
-                success: function () {
-                    $(".row").load("ajax/tampilPemasukkanDel.php");
-                }
-            });
-        });
-        return false;
-    });
-});
-</script>
+<script src="ajax/js/deletePemasukkan.js"></script>

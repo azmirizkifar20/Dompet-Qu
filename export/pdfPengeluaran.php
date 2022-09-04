@@ -3,35 +3,39 @@ function fetchData()
 {
     $output = '';
     require '../function/functions.php';
-    $sql = "SELECT * FROM keluar ORDER BY id ASC";
+    $jenis = $_GET['jenis'];
+    $tanggalAwal = $_GET['awal'];
+    $tanggalAkhir = $_GET['akhir'];
+    $username = $_GET['username'];
+    $sql = "SELECT * FROM $jenis WHERE username = '$username' AND (tanggal BETWEEN '$tanggalAwal' AND '$tanggalAkhir')";
     $result = mysqli_query($koneksi, $sql);
     $no = 1;
     
     while ($row = mysqli_fetch_assoc($result)) {
         // masukin nilai ke variabel
-        $harga = $row["harga"];
+        $jumlah = $row["jumlah"];
         // konversi string nilai ke int + split
-        $konversiHarga = str_replace('.', '', $harga);
-        $hasilHarga = number_format ($konversiHarga, 2, ',', '.');
+        $jumlahConvert = str_replace('.', '', $jumlah);
+        $hasilJumlah = number_format ($jumlahConvert, 2, ',', '.');
         $output .= '
         <tr>
             <td>' . $no . '</td>
             <td>' . $row["tanggal"] . '</td>
             <td>' . $row["keterangan"] . '</td>
             <td>' . $row["keperluan"] . '</td>
-            <td>' . $hasilHarga . '</td>
+            <td>' . $hasilJumlah . '</td>
         </tr>
         ';
-        $hargae[] = $row["harga"];
-        $hargaConvert = str_replace('.', '', $hargae);
-        $totali = array_sum($hargaConvert);
-        $hasilHarga2 = number_format($totali, 2, ',', '.');
+        $jumlahe[] = $row["jumlah"];
+        $jumlahConvert = str_replace('.', '', $jumlahe);
+        $totali = array_sum($jumlahConvert);
+        $hasilJumlah2 = number_format($totali, 2, ',', '.');
         $no++;
     }
     $output .= '
     <tr>
         <td colspan="4" style="text-align: center;">Total Pengeluaran</td>
-        <td>' . $hasilHarga2 . '</td>
+        <td>' . $hasilJumlah2 . '</td>
     </tr>
     ';
     return $output;

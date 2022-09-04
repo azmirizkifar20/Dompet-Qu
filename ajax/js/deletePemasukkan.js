@@ -1,5 +1,7 @@
 $(function () {
     $(".delete").click(function () {
+        var filter = $('#filter').val();
+        var username = $('#username').val();
         var element = $(this);
         var del_id = element.attr("id");
         var info = 'id=' + del_id;
@@ -14,10 +16,10 @@ $(function () {
             function () {
                 $.ajax({
                     type: "POST",
-                    url: "ajax/deletePemasukkan.php",
+                    url: "function/deletePemasukkan.php",
                     data: info,
                     success: function () {
-                        $(".row").load("ajax/tampilPemasukkanDel.php");
+                        $(".tampil").load("ajax/tampilPemasukkanDel?filterSend=" + filter + '&username=' + username);
                     }
                 });
             });

@@ -1,7 +1,12 @@
 <?php 
     require '../function/functions.php';
     
-    $pengeluaran = query("SELECT * FROM keluar WHERE tanggal = DATE(NOW())");
+    if (isset($_GET['filterSend'])) {
+        $tgl = $_GET['filterSend'];
+        $username = $_GET['username'];
+    }
+    global $tgl;
+    $pengeluaran = query("SELECT * FROM pengeluaran WHERE tanggal LIKE '%$tgl%' AND username = '$username'");
 ?>
 
 
@@ -22,24 +27,18 @@
             <tr class="show" id="<?= $row["id"]; ?>">
                 <td><?= $i; ?> </td>
                 <td data-target="tanggal"><?= $row["tanggal"]; ?></td>
-                <td data-target="keterangan"><?= $row["keterangan"]; ?></td>
+                <td data-target="keterangan"><?= htmlspecialchars($row["keterangan"]); ?></td>
                 <td data-target="keperluan"><?= $row["keperluan"]; ?></td>
-                <td data-target="harga"><?php
-                        $harga = $row["harga"];
-                        // konversi string nilai ke int + split
-                        $konversiHarga = str_replace('.', '', $harga);
-                        $hasilHarga = number_format($konversiHarga, 0, ',', '.');
-                        echo "$hasilHarga"
-                    ?></td>
+                <td data-target="jumlahKeluar"><?= $row['jumlah'] ?></td>
                 <td>    
                     <a href="#" id="<?= $row["id"] ;?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
                     <a href="#" data-role="update" data-id="<?= $row["id"] ;?>" class="btn btn-outline-secondary" id="openBtn"><i class="fas fa-edit"></i></a>
                 </td>
             </tr>
             <?php
-                $hargae[] = $row["harga"];
-                $hargaConvert = str_replace('.', '', $hargae);
-                $totali = array_sum($hargaConvert);
+                $jumlah2[] = $row["jumlah"];
+                $jumlahConvert = str_replace('.', '', $jumlah2);
+                $totali = array_sum($jumlahConvert);
                 $hasilcon = number_format($totali, 0, ',', '.');
             ?>
             <?php $i++ ?>
@@ -47,7 +46,7 @@
             
             <?php if ( isset($row) != "" ) : ?> 
             <tr>
-                <td colspan="4">Total Pemasukkan</td>
+                <td colspan="4">Total Pengeluaran</td>
                 <td><?= $hasilcon ?></td>
             </tr>
             <?php elseif ( isset($row) == "" ) : ?> 
@@ -58,3 +57,5 @@
         </table>
     </div>
 </div>
+
+<script src="ajax/js/deletePengeluaran.js"></script>

@@ -1,7 +1,11 @@
 <?php 
     require '../function/functions.php';
-    $pemasukkan = query("SELECT * FROM masuk WHERE tanggal = DATE(NOW())");
-
+    if (isset($_GET['filterSend'])) {
+        $tgl = $_GET['filterSend'];
+        $username = $_GET['username'];
+    }
+    global $tgl;
+    $pemasukkan = query("SELECT * FROM pemasukkan WHERE tanggal LIKE '%$tgl%' AND username = '$username'");
 ?>
 
     <div class="col-md-12">
@@ -23,12 +27,12 @@
                     <td data-target="tanggal"><?= $row["tanggal"]; ?></td>
                     <td data-target="keterangan"><?= $row["keterangan"]; ?></td>
                     <td data-target="sumber"><?= $row["sumber"]; ?></td>
-                    <td data-target="harga"><?php
-                            $harga = $row["harga"];
+                    <td data-target="jumlahMasuk"><?php
+                            $jumlah = $row["jumlah"];
                             // konversi string nilai ke int + split
-                            $konversiHarga = str_replace('.', '', $harga);
-                            $hasilHarga = number_format($konversiHarga, 0, ',', '.');
-                            echo "$hasilHarga"
+                            $konversiJumlah = str_replace('.', '', $jumlah);
+                            $hasilJumlah = number_format($konversiJumlah, 0, ',', '.');
+                            echo "$hasilJumlah"
                         ?></td>
                     <td>    
                         <a href="#" id="<?= $row["id"] ;?>" class="btn btn-info delete"><i class="fas fa-trash-alt"></i></a>
@@ -36,9 +40,9 @@
                     </td>
                 </tr>
                 <?php
-                    $hargae[] = $row["harga"];
-                    $hargaConvert = str_replace('.', '', $hargae);
-                    $totali = array_sum($hargaConvert);
+                    $jumlah2[] = $row["jumlah"];
+                    $jumlahConvert = str_replace('.', '', $jumlah2);
+                    $totali = array_sum($jumlahConvert);
                     $hasilcon = number_format($totali, 0, ',', '.');
                 ?>
                 <?php $i++ ?>

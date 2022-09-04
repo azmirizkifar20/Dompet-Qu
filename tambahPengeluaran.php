@@ -1,37 +1,58 @@
-<?php
-session_start();
-if (!isset($_SESSION["login"])) {
-    header("Location: login.php");
-    exit;
-}
+<?php 
+    session_start();
+    require "function/functions.php";
     
-    // koneksi ke function
-require 'function/functions.php';
+    // session dan cookie multilevel user
+    if(isset($_COOKIE['login'])) {
+        if ($_COOKIE['level'] == 'user') {
+            $_SESSION['login'] = true;
+            $ambilNama = $_COOKIE['login'];
+        } 
+        
+        elseif ($_COOKIE['level'] == 'admin') {
+            $_SESSION['login'] = true;
+            header('Location: administrator');
+        }
+    } 
 
-    // cek apakah tombol submit berfungsi atau tidak
-if (isset($_POST["submit"])) {
-    if (tambahKeluar($_POST) > 0) {
-        echo "
-            <script>
-                alert('data berhasil ditambahkan!');
-                document.location.href = 'pengeluaran.php';
-            </script>
-            ";
-    } else {
-        echo "
-            <script>
-                alert('data gagal ditambahkan!');
-                document.location.href = 'pengeluaran.php';
-            </script>
-            ";
+    elseif ($_SESSION['level'] == 'user') {
+        $ambilNama = $_SESSION['user'];
+    } 
+    
+    else {
+        if ($_SESSION['level'] == 'admin') {
+            header('Location: administrator');
+            exit;
+        }
     }
-}
 
-$month = date('m');
-$day = date('d');
-$year = date('Y');
+    if(empty($_SESSION['login'])) {
+        header('Location: login');
+        exit;
+    } 
+    
+    if (isset($_POST["submit"])) {
+        if (tambahKeluar($_POST) > 0) {
+            echo "
+                <script>
+                    alert('data berhasil ditambahkan!');
+                    document.location.href = 'pengeluaran';
+                </script>
+                ";
+        } else {
+            echo "
+                <script>
+                    alert('data gagal ditambahkan!');
+                </script>
+                ";
+        }
+    }
+    
+    $month = date('m');
+    $day = date('d');
+    $year = date('Y');
 
-$today = $year . '-' . $month . '-' . $day;
+    $today = $year . '-' . $month . '-' . $day;
 ?>
 
 <!DOCTYPE html>
@@ -55,31 +76,37 @@ $today = $year . '-' . $month . '-' . $day;
 
 <body>
     <div class="header">
-        <h3 class="text-secondary font-weight-bold float-left logo">CRUD</h3>
-        <h3 class="text-secondary float-left logo2">Financial</h3>
-        <a href="logout.php" class=" float-right log"><i class="fas fa-sign-out-alt"></i></a>
+        <img src="img/favicon.png" width="25px" height="25px" class="float-left logo-fav">
+        <h3 class="text-secondary font-weight-bold float-left logo">Dompet</h3>
+        <h3 class="text-secondary float-left logo2">- Qu</h3>
+        <a href="logout">
+            <div class="logout">
+                <i class="fas fa-sign-out-alt float-right log"></i>
+                <p class="float-right logout">Logout</p>
+            </div>
+        </a>
     </div>
 
     <div class="sidebar">
         <nav>
             <ul>
                 <li>
-                    <img src="img/profile.png" class="img-fluid profile" width="60px">
-                    <h5 class="admin float-right">Admin</h5>
-                    <div class="online">
+                    <img src="img/profile.png" class="img-fluid profile float-left" width="60px">
+                    <h5 class="admin"><?= substr($ambilNama, 0, 7) ?></h5>
+                    <div class="online online2">
                         <p class="float-right ontext">Online</p>
                         <div class="on float-right"></div>
                     </div>
                 </li>
-                
+
                 <!-- fungsi slide -->
-                <script> 
-                    $(document).ready(function(){
-                        $("#flip").click(function(){
+                <script>
+                    $(document).ready(function () {
+                        $("#flip").click(function () {
                             $("#panel").slideToggle("medium");
                             $("#panel2").slideToggle("medium");
                         });
-                        $("#flip2").click(function(){
+                        $("#flip2").click(function () {
                             $("#panel3").slideToggle("medium");
                             $("#panel4").slideToggle("medium");
                         });
@@ -87,7 +114,7 @@ $today = $year . '-' . $month . '-' . $day;
                 </script>
 
                 <!-- dashboard -->
-                <a href="index.php" style="text-decoration: none;">
+                <a href="dashboard" style="text-decoration: none;">
                     <li>
                         <div>
                             <span class="fas fa-tachometer-alt"></span>
@@ -95,7 +122,7 @@ $today = $year . '-' . $month . '-' . $day;
                         </div>
                     </li>
                 </a>
-                
+
                 <!-- data -->
                 <li class="klik" id="flip" style="cursor:pointer;">
                     <div>
@@ -105,7 +132,7 @@ $today = $year . '-' . $month . '-' . $day;
                     </div>
                 </li>
 
-                <a href="pemasukkan.php" class="linkAktif">
+                <a href="pemasukkan" class="linkAktif">
                     <li id="panel" style="display: none;">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-file-invoice-dollar"></i></span>
@@ -114,7 +141,7 @@ $today = $year . '-' . $month . '-' . $day;
                     </li>
                 </a>
 
-                <a href="pengeluaran.php" class="linkAktif">
+                <a href="pengeluaran" class="linkAktif">
                     <li id="panel2" style="display: none;">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-hand-holding-usd"></i></span>
@@ -133,7 +160,7 @@ $today = $year . '-' . $month . '-' . $day;
                     </div>
                 </li>
 
-                <a href="tambahPemasukkan.php" class="linkAktif">
+                <a href="tambahPemasukkan" class="linkAktif">
                     <li id="panel3">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-file-invoice-dollar"></i></span>
@@ -142,7 +169,7 @@ $today = $year . '-' . $month . '-' . $day;
                     </li>
                 </a>
 
-                <a href="tambahPengeluaran.php" class="linkAktif">
+                <a href="tambahPengeluaran" class="linkAktif">
                     <li class="aktif" style="border-left: 5px solid #306bff;" id="panel4">
                         <div style="margin-left: 20px;">
                             <span><i class="fas fa-hand-holding-usd"></i></span>
@@ -151,7 +178,17 @@ $today = $year . '-' . $month . '-' . $day;
                     </li>
                 </a>
                 <!-- Input -->
-                
+
+                <!-- laporan -->
+                <a href="laporan" style="text-decoration: none;">
+                    <li>
+                        <div>
+                            <span><i class="fas fa-clipboard-list"></i></span>
+                            <span>Laporan</span>
+                        </div>
+                    </li>
+                </a>
+
                 <!-- change icon -->
                 <script>
                     $(".klik").click(function () {
@@ -183,17 +220,18 @@ $today = $year . '-' . $month . '-' . $day;
                 <div class="container">
                     <div class="konten_isi">
                         <table class="table-sm">
-                        <script type="text/javascript" src="js/pisahTitik.js"></script>
+                            <script type="text/javascript" src="js/pisahTitik.js"></script>
                             <form class="form-text" action="" method="post">
                                 <tr>
                                     <td>Masukkan Tanggal Pengeluaran</td>
                                     <td>:</td>
-                                    <td><input class="form-control" type="date" value="<?= $today ?>" name="tanggal" required></td>
+                                    <td><input class="form-control" type="date" value="<?= $today ?>" name="tanggal"
+                                            required></td>
                                 </tr>
                                 <tr>
                                     <td>Masukkan Keterangan Pengeluaran</td>
                                     <td>:</td>
-                                    <td><input class="form-control" type="text" name="keterangan" required></td>
+                                    <td><input class="form-control" type="text" name="keterangan" autocomplete="off" required></td>
                                 </tr>
                                 <tr>
                                     <td>Masukkan Keperluan Pengeluaran</td>
@@ -213,10 +251,11 @@ $today = $year . '-' . $month . '-' . $day;
                                 <tr>
                                     <td>Masukkan Jumlah Pengeluaran</td>
                                     <td>:</td>
-                                    <td><input class="form-control" type="text" name="harga" onkeydown="return numbersonly(this, event);" onkeyup="javascript:tandaPemisahTitik(this);" required></td>
+                                    <td><input class="form-control" type="text" name="jumlah" autocomplete="off" onkeydown="return numbersonly(this, event);"
+                                            onkeyup="javascript:tandaPemisahTitik(this);" required></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
+                                    <td><input type="hidden" name="username" value="<?= $ambilNama ?>"></td>
                                     <td></td>
                                     <td>
                                         <center><button class="btn btn-primary btn-block" type="submit" name="submit">tambah

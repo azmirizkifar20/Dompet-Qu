@@ -1,33 +1,14 @@
 <?php 
-session_start();
-if (!isset($_SESSION["login"])) {
-    header("Location: login.php");
-    exit;
-}
-
-// koneksi ke databse
-require 'function/functions.php';
-
-$totalPemasukan = query("SELECT * FROM masuk");
-$totalPengeluaran = query("SELECT * FROM keluar");
-
-foreach ( $totalPemasukan as $rowMasuk ) {
-    $hargaMasuk[] = $rowMasuk["harga"];
-    $convertHarga = str_replace('.', '', $hargaMasuk);
-    $totalMasuk = array_sum($convertHarga);
-}
-
-foreach ( $totalPengeluaran as $rowKeluar ) {
-    $hargaKeluar[] = $rowKeluar["harga"];
-    $convertHarga2 = str_replace('.', '', $hargaKeluar);
-    $totalKeluar = array_sum($convertHarga2);
-}
-
-global $totalMasuk;
-global $totalKeluar;
-$saldo = $totalMasuk - $totalKeluar;
-$saldoFix = number_format($saldo, 0, ',', '.'); 
-
+    session_start();
+    require "function/functions.php";
+    
+    if ( isset($_SESSION["login"]) ) {
+        header("Location: dashboard");
+        exit;
+    } elseif(isset($_COOKIE['login'])) {
+        header("Location: dashboard");
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -38,410 +19,337 @@ $saldoFix = number_format($saldo, 0, ',', '.');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="img/favicon.png">
-    <title>Dompet-Qu - Dashboard</title>
+    <title>Dompet - Qu</title>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-reboot.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styler.css?v=1.0">
-    <link rel="stylesheet" href="css/dashboard.css?v=1.0">
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/sweetalert.min.js"></script>
-    <script src="js/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        type="text/css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <style>
+        .parallax {
+            background: url(img/bg3.jpg);
+            background-attachment: fixed;
+            /* background-size: cover; */
+            background-repeat: no-repeat;
+        }   
+
+        .parallax2 {
+            background: url(img/team.jpg);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="header">
-        <h3 class="text-secondary font-weight-bold float-left logo">CRUD</h3>
-        <h3 class="text-secondary float-left logo2">Financial</h3>
-        <a href="logout.php" class="float-right log"><i class="fas fa-sign-out-alt"></i></a>
-    </div>
+<body id="page-top">
 
-    <div class="sidebar">
-        <nav>
-            <ul>
-                <li>
-                    <img src="img/profile.png" class="img-fluid profile" width="60px">
-                    <h5 class="admin float-right">Admin</h5>
-                    <div class="online">
-                        <p class="float-right ontext">Online</p>
-                        <div class="on float-right"></div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top main-nav" id="mainNav">
+        <div class="container">
+            <a class="js-scroll-trigger" href="#page-top">
+                <img src="img/logo.png" width="20px" style="margin-right: 10px; margin-bottom: 2px;">
+            </a>
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">Semicolon SQUAD</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="login" class="nav-link">Sign in</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Navigation -->
+
+    <!-- header -->
+    <header id="home" class="text-light parallax">
+        <div class="container konten">
+            <h1 style="font-size: 36pt;">Welcome to Dompet - Qu</h1>
+            <p class="lead" style="font-size: 16pt;">Aplikasi pencatatan keuangan harian dengan
+                fitur
+                transaksi terbaik</p>
+            <a href="login" class="btn btn-outline-light button">Get Started</a>
+        </div>
+    </header>
+    <!-- header -->
+
+    <!-- features -->
+    <section id="features" class="bg-light">
+        <div class=" container konten2">
+            <div class="garis text-center">FEATURES</div>
+
+            <div class="col-lg-12 foot-fitur">
+                <h4 class="headline text-center">Dompet - Qu</h4>
+                <p class="isi-fitur text-center">Dompet - Qu adalah aplikasi web pencatatan keuangan harian yang
+                    mempunyai fitur-fitur menarik untuk memonitoring keuangan harian anda. Direkomendasikan bagi para
+                    remaja
+                    yang kesulitan dalam melakukan pengelolaan keuangannya. </p>
+            </div>
+
+            <div class="row row2">
+                <div class="col-lg-6 fiturs">
+                    <div class="gbr">
+                        <div class="box">
+                            <img src="img/transaksi.jpg" class="gambar-fitur img" width="100%">
+                        </div>
                     </div>
-                </li>
-                <!-- fungsi slide -->
-                <script> 
-                $(document).ready(function(){
-                    $("#flip").click(function(){
-                        $("#panel").slideToggle("medium");
-                        $("#panel2").slideToggle("medium");
-                    });
-                    $("#flip2").click(function(){
-                        $("#panel3").slideToggle("medium");
-                        $("#panel4").slideToggle("medium");
-                    });
-                });
-                </script>
-                <!-- dashboard -->
-                <a href="index.php" style="text-decoration: none;">
-                    <li class="aktif" style="border-left: 5px solid #306bff;">
-                        <div>
-                            <span class="fas fa-tachometer-alt"></span>
-                            <span>Dashboard</span>
+                </div>
+                <div class="col-lg-6 fiturs">
+                    <h4 class="headline">Transaksi Harian</h4>
+                    <p class="isi-fitur">
+                        Kami memberikan fitur transaksi harian yang akan menampilkan data
+                        harian yang bisa mempermudah anda dalam mengelola keuangan pribadi. dan data keuangan anda akan
+                        tersimpan dengan aman di dalam aplikasi ini.</p>
+                </div>
+            </div>
+
+            <div class="row row2">
+                <div class="col-lg-6 fiturs text-right">
+                    <h4 class="headline">Rekening Pribadi</h4>
+                    <p class="isi-fitur">Kami menyediakan fitur rekening pribadi yang dapat mempermudah anda dalam
+                        melakukan pengelolaan keuangan di dompet dan juga di rekening anda. Dengan fitur ini,
+                        pengelolaan
+                        uang anda di rekening menjadi lebih mudah dan terkelola dengan baik.</p>
+                </div>
+                <div class="col-lg-6 fiturs">
+                    <div class="gbr">
+                        <div class="box">
+                            <img src="img/rekening.jpg" class="gambar-fitur img" width="100%">
                         </div>
-                    </li>
-                </a>
-                
-                <!-- data -->
-                <li class="klik" id="flip" style="cursor:pointer;">
-                    <div>
-                        <span class="fas fa-database"></span>
-                        <span>Data Harian</span>
-                        <i class="fas fa-caret-right float-right" style="line-height: 20px;"></i>
                     </div>
-                </li>
+                </div>
+            </div>
 
-                <a href="pemasukkan.php" class="linkAktif">
-                    <li id="panel" style="display: none;">
-                        <div style="margin-left: 20px;">
-                            <span><i class="fas fa-file-invoice-dollar"></i></span>
-                            <span>Data Pemasukkan</span>
+            <div class="row row2">
+                <div class="col-lg-6 fiturs">
+                    <div class="gbr">
+                        <div class="box">
+                            <img src="img/monitor.jpg" class="gambar-fitur img" width="100%">
                         </div>
-                    </li>
-                </a>
-
-                <a href="pengeluaran.php" class="linkAktif">
-                    <li id="panel2" style="display: none;">
-                        <div style="margin-left: 20px;">
-                            <span><i class="fas fa-hand-holding-usd"></i></span>
-                            <span>Data Pengeluaran</span>
-                        </div>
-                    </li>
-                </a>
-                <!-- data -->
-
-                <!-- Input -->
-                <li class="klik2" id="flip2" style="cursor:pointer;">
-                    <div>
-                        <span class="fas fa-plus-circle"></span>
-                        <span>Input Data</span>
-                        <i class="fas fa-caret-right float-right" style="line-height: 20px;"></i>
                     </div>
-                </li>
+                </div>
+                <div class="col-lg-6 fiturs">
+                    <h4 class="headline">Monitoring Keuangan</h4>
+                    <p class="isi-fitur">Monitoring keuangan tentunya sangat diperlukan untuk mengelola pengeluaran dan
+                        pemasukan kita. kami menyediakan dashboard yang berisi beberapa fitur, seperti saldo, total
+                        uang yang masuk dan keluar, dan rekening.</p>
+                </div>
+            </div>
 
-                <a href="tambahPemasukkan.php" class="linkAktif">
-                    <li id="panel3" style="display: none;">
-                        <div style="margin-left: 20px;">
-                            <span><i class="fas fa-file-invoice-dollar"></i></span>
-                            <span>Pemasukkan</span>
-                        </div>
-                    </li>
-                </a>
+        </div>
+    </section>
+    <!-- features -->
 
-                <a href="tambahPengeluaran.php" class="linkAktif">
-                    <li id="panel4" style="display: none;">
-                        <div style="margin-left: 20px;">
-                            <span><i class="fas fa-hand-holding-usd"></i></span>
-                            <span>Pengeluaran</span>
-                        </div>
-                    </li>
-                </a>
-                <!-- Input -->
-                
-                <!-- change icon -->
-                <script>
-                    $(".klik").click(function () {
-                        $(this).find('i').toggleClass('fa-caret-up fa-caret-right');
-                        if ($(".klik").not(this).find("i").hasClass("fa-caret-right")) {
-                            $(".klik").not(this).find("i").toggleClass('fa-caret-up fa-caret-right');
-                        }
-                    });
-                    $(".klik2").click(function () {
-                        $(this).find('i').toggleClass('fa-caret-up fa-caret-right');
-                        if ($(".klik2").not(this).find("i").hasClass("fa-caret-right")) {
-                            $(".klik2").not(this).find("i").toggleClass('fa-caret-up fa-caret-right');
-                        }
-                    });
-                </script>
-                <!-- change icon -->
-            </ul>
-        </nav>
-    </div>
-
-    <div class="main-content khusus">
-        <div class="konten khusus2">
-            <div class="konten_dalem khusus3">
-                <h2 class="heade" style="color: #4b4f58;">Dashboard</h2>
-                <hr style="margin-top: -2px;">
-                <div class="container" id="container" style="border: none;">
-                    <div class="row" id="row">
-
-                        <div class="col-md-4 jarak">
-                            <div class="card card-stats card-warning" style="background: #347ab8;">
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="col-5">
-                                            <div class="icon-big text-center">
-                                                <i class="fas fa-balance-scale ikon"></i>
-                                            </div>
-                                        </div>
-                                        <div class="col-7 d-flex align-items-center tulisan">
-                                            <div class="numbers">
-                                                <p class="card-category ket head">Saldo</p>
-                                                <h4 class="card-title ket total">Rp. <?=$saldoFix;?></h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+    <!-- about us -->
+    <section id="about" class="bg-primary parallax2">
+        <div class="container">
+            <div style="color: white;" class="garis garis3 text-center">OUR TEAM</div>
+            <div class="row text-center">
+                <div class="col-lg-4">
+                    <div class="team">
+                        <div class="gbr">
+                            <div class="box">
+                                <img class="img" src="profile/azmi.jpg" width="100%">
                             </div>
                         </div>
+                        <div class="teks">
+                            <h3 class="job-desk">Team Leader</h3>
+                            <p>Muhamad Azmi Rizkifar</p>
+                            <p>Mau pake framework atau native, kalau males mikir ya 22 nya susah</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="team">
+                        <div class="gbr">
+                            <div class="box">
+                                <img class="img" src="profile/dina.jpg" width="100%">
+                            </div>
+                        </div>
+                        <div class="teks">
+                            <h3 class="job-desk">UI/UX Designer</h3>
+                            <p>ST. Sheillya Pradina</p>
+                            <p>Kalau kamu bingung mau ngetik apa, bagusnya sih lorem ipsum aja</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="team">
+                        <div class="gbr">
+                            <div class="box">
+                                <img class="img" src="profile/sayyid.jpg" width="100%">
+                            </div>
+                        </div>
+                        <div class="teks">
+                            <h3 class="job-desk">Programmer</h3>
+                            <p>Naufal Sayyid Furqoon</p>
+                            <p>Ngode in program mah ngasih harapan, kalau kamu mah enggak</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- about us -->
 
-                        <div class="col-md-4 jarak">
-                            <a href="tambahPengeluaran.php" style="text-decoration: none;">
-                                <div class="card card-stats card-warning" style="background: #d95350;">
-                                    <div class="card-body ">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <div class="icon-big text-center">
-                                                    <i class="fa fa-file-invoice-dollar ikon"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-7 d-flex align-items-center tulisan">
-                                                <div class="numbers">
-                                                    <p class="card-category ket head">Pengeluaran</p>
-                                                    
-                                                    <?php foreach ($totalPengeluaran as $row) : ?>
-                                                    <?php
-                                                        $hargaPengeluaran[] = $row["harga"];
-                                                        $hargaConvert = str_replace('.', '', $hargaPengeluaran);
-                                                        $totalPeng = array_sum($hargaConvert);
-                                                        $hasilHargaPengeluaran = number_format($totalPeng, 0, ',', '.');   
-                                                    ?>                                     
-                                                    <?php endforeach; ?>
-
-                                                    <?php global $hasilHargaPengeluaran;
-                                                    if ( $hasilHargaPengeluaran != "" ) : ?>
-                                                    <h4 class="card-title ket total">Rp. <?= $hasilHargaPengeluaran; ?></h4>
-                                                    <?php else : ?>
-                                                    <h4 class="card-title ket total">Rp. 0</h4>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="overlay" style="background: #e45351;">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <div class="icon-big text-center">
-                                                    <i class="fas fa-plus-circle ikon2"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-7 d-flex align-items-center">
-                                                <p class="tulisan">Tambah Data</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+    <!-- contact -->
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="garis garis2 text-center">CONTACT US</div>
+                    <div class="row text-center">
+                        <div class="col col1">
+                            <a href="https://www.facebook.com" target="_blank">
+                                <!-- <img src="icons/facebook.png" width="70%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/facebook.png" width="70%">
                             </a>
                         </div>
-
-                        <div class="col-md-4 jarak">
-                            <a href="tambahPemasukkan.php" style="text-decoration: none;">
-                                <div class="card card-stats card-warning" style="background: #5db85b;">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <div class="icon-big text-center">
-                                                    <i class="fa fa-hand-holding-usd ikon"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-7 d-flex align-items-center tulisan">
-                                                <div class="numbers">
-                                                    <p class="card-category ket head">Pemasukkan</p>
-
-                                                    <?php foreach ($totalPemasukan as $row) : ?>
-                                                        <?php
-                                                            $hargaPemasukkan[] = $row["harga"];
-                                                            $hargaConvert = str_replace('.', '', $hargaPemasukkan);
-                                                            $totalPem = array_sum($hargaConvert);
-                                                            $hasilHarga = number_format($totalPem, 0, ',', '.');    
-                                                        ?>     
-                                                    <?php endforeach ?>
-
-                                                    <?php global $hasilHarga;
-                                                    if ( $hasilHarga != "" ) : ?>
-                                                    <h4 class="card-title ket total">Rp. <?= $hasilHarga ?> </h4>
-                                                    <?php else : ?>
-                                                    <h4 class="card-title ket total">Rp. 0 </h4>
-                                                    <?php endif; ?>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="overlay">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <div class="icon-big text-center">
-                                                    <i class="fas fa-plus-circle ikon2"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-7 d-flex align-items-center">
-                                                <p class="tulisan">Tambah Data</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="col col2">
+                            <a href="https://plus.google.com" target="_blank">
+                                <!-- <img src="icons/google-plus.png" width="70%"> -->
+                                <img src="https://img.icons8.com/color/96/000000/google-plus-squared.png" width="70%">
+                            </a>
+                        </div>
+                        <div class="col col3">
+                            <a href="https://www.instagram.com" target="_blank">
+                                <!-- <img src="icons/instagram.png" width="70%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/instagram-new.png" width="70%">
+                            </a>
+                        </div>
+                        <div class="col col4">
+                            <a href="https://www.linkedin.com" target="_blank">
+                                <!-- <img src="icons/linkedin.png" width="70%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/linkedin.png" width="70%">
+                            </a>
+                        </div>
+                        <div class="col col5">
+                            <a href="https://www.pinterest.com" target="_blank">
+                                <!-- <img src="icons/pinterest.png" width="70%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/pinterest.png" width="70%">
                             </a>
                         </div>
                     </div>
-
-                    <div class="table-responsive chart">
-                        <div class="keluar">
-                            <canvas id="myChart"></canvas>
+                    <div class="row row3 text-center">
+                        <div class="col-4 text-right">
+                            <a href="https://twitter.com" target="_blank">
+                                <!-- <img src="icons/twitter.png" width="38%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/twitter.png" width="38%">
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="https://www.whatsapp.com" target="_blank">
+                                <!-- <img src="icons/whatsapp.png" width="38%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/whatsapp.png" width="38%">
+                            </a>
+                        </div>
+                        <div class="col-4 text-left">
+                            <a href="https://www.youtube.com" target="_blank">
+                                <!-- <img src="icons/youtube.png" width="38%"> -->
+                                <img src="https://img.icons8.com/color/480/000000/youtube-squared.png" width="38%">
+                            </a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- contact -->
 
-                    <div class="table-responsive chart">
-                        <div class="keluar">
-                            <canvas id="myChart2"></canvas>
+    <!-- Footer -->
+    <div class="py-3 bg-dark">
+        <div class="container text-light">
+            <div class="row">
+                <div class="col-lg-3 col-6 p-3">
+                    <h5> <b>Main</b> </h5>
+                    <ul class="list-unstyled">
+                        <li> <a href="#home" class="js-scroll-trigger foot-link">Home</a> </li>
+                        <li> <a href="#features" class="js-scroll-trigger foot-link">Features</a> </li>
+                        <li> <a href="#about" class="js-scroll-trigger foot-link">About Us</a> </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-6 p-3">
+                    <h5> <b>Others</b> </h5>
+                    <ul class="list-unstyled">
+                        <li> <a href="faq" class="foot-link">FAQ</a> </li>
+                        <li> <a href="#" class="foot-link">Promotion Videos</a> </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 p-3">
+                    <h5> <b>About</b> </h5>
+                    <p class="mb-0">Aplikasi Dompet-Qu dilengkapi dengan fitur menarik yang dapat mempermudah user mengelola keuangannya.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 p-3">
+                    <h5> <b>Follow us</b> </h5>
+                    <div class="row">
+                        <div class="col-md-12 d-flex align-items-center justify-content-between my-2">
+                            <a href="https://www.facebook.com" class="foot-link" target="_blank">
+                                <i class="d-block fa fa-facebook-official warna-icon fa-lg mr-2"></i>
+                            </a>
+                            <a href="https://www.instagram.com" class="foot-link" target="_blank">
+                                <i class="d-block fa fa-instagram warna-icon fa-lg mx-2"></i>
+                            </a>
+                            <a href="https://plus.google.com" class="foot-link" target="_blank">
+                                <i class="d-block fa fa-google-plus-official warna-icon fa-lg mx-2"></i>
+                            </a>
+                            <a href="https://www.pinterest.com" class="foot-link" target="_blank">
+                                <i class="d-block fa fa-pinterest-p warna-icon fa-lg mx-2"></i>
+                            </a>
+                            <a href="https://www.reddit.com" class="foot-link" target="_blank">
+                                <i class="d-block fa fa-reddit warna-icon fa-lg mx-2"></i>
+                            </a>
+                            <a href="https://twitter.com" class="foot-link" target="_blank">
+                                <i class="d-block fa fa-twitter warna-icon fa-lg ml-2"></i>
+                            </a>
                         </div>
                     </div>
-
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0 mt-2">Copyright © 2019 Dompet-Qu. All rights reserved</p>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script type="text/javascript">
-	var ctx = document.getElementById("myChart").getContext('2d');
-	var myChart = new Chart(ctx, {
-		type: 'bar',
-		data: {
-			labels: ["Makan & minum", "Hutang", "Peralatan", "Organisasi", "Kendaraan", "keperluan Pribadi"],
-			datasets: [{
-				label: 'Data Pengeluaran',
-				data: [
-				<?php 
-				$makanMinum = mysqli_query($koneksi,"SELECT * FROM keluar WHERE keperluan='makan dan minum'");
-				echo mysqli_num_rows($makanMinum);
-				?>, 
-				<?php 
-				$hutang = mysqli_query($koneksi,"SELECT * FROM keluar WHERE keperluan='hutang'");
-				echo mysqli_num_rows($hutang);
-				?>, 
-				<?php 
-				$peralatan = mysqli_query($koneksi,"SELECT * FROM keluar WHERE keperluan='peralatan'");
-				echo mysqli_num_rows($peralatan);
-				?>, 
-				<?php 
-				$organisasi = mysqli_query($koneksi,"SELECT * FROM keluar WHERE keperluan='organisasi'");
-				echo mysqli_num_rows($organisasi);
-				?>, 
-				<?php 
-				$kendaraan = mysqli_query($koneksi,"SELECT * FROM keluar WHERE keperluan='kendaraan'");
-				echo mysqli_num_rows($kendaraan);
-				?>, 
-				<?php 
-				$pribadi = mysqli_query($koneksi,"SELECT * FROM keluar WHERE keperluan='keperluan pribadi'");
-				echo mysqli_num_rows($pribadi);
-				?>, 
-				],
-				backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-				],
-				borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-				],
-				borderWidth: 1
-			}]
-		},
-		options: {
-			scales: {
-				yAxes: [{
-					ticks: {
-						beginAtZero:true
-					}
-				}]
-			}
-		}
-	});
-    </script>
-    
-    <script type="text/javascript">
-	var ctx = document.getElementById("myChart2").getContext('2d');
-	var myChart = new Chart(ctx, {
-		type: 'bar',
-		data: {
-			labels: ["ATM", "Pemberian", "Piutang", "Laba", "Pekerjaan"],
-			datasets: [{
-				label: 'Data Pemasukkan',
-				data: [
-				<?php 
-				$atm = mysqli_query($koneksi,"SELECT * FROM masuk WHERE sumber='atm'");
-				echo mysqli_num_rows($atm);
-				?>, 
-				<?php 
-				$pemberian = mysqli_query($koneksi,"SELECT * FROM masuk WHERE sumber='pemberian'");
-				echo mysqli_num_rows($pemberian);
-				?>, 
-				<?php 
-				$piutang = mysqli_query($koneksi,"SELECT * FROM masuk WHERE sumber='piutang'");
-				echo mysqli_num_rows($piutang);
-				?>, 
-				<?php 
-				$laba = mysqli_query($koneksi,"SELECT * FROM masuk WHERE sumber='laba penjualan'");
-				echo mysqli_num_rows($laba);
-				?>, 
-				<?php 
-				$pekerjaan = mysqli_query($koneksi,"SELECT * FROM masuk WHERE sumber='pekerjaan'");
-				echo mysqli_num_rows($pekerjaan);
-				?>
-				],
-				backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)'
-				],
-				borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)'
-				],
-				borderWidth: 1
-			}]
-		},
-		options: {
-			scales: {
-				yAxes: [{
-					ticks: {
-						beginAtZero:true
-					}
-				}]
-			}
-		}
-	});
-    </script>
-    
+    <!-- Footer -->
+
+    <!-- <footer class="bg-dark foot">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; 2018 Semicolon SQUAD</p>
+        </div>
+    </footer> -->
+
+    <!-- js utama -->
+    <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- js scrolling -->
+    <script src="js/scrolling-nav.js"></script>
+
 </body>
 
 </html>
